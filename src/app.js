@@ -94,6 +94,26 @@ function create() {
   stars.create(722, 0, 'star');
 
   this.physics.add.collider(stars, platforms);
+
+  // allow player to pick up stars
+  let score = 0;
+  let scoreText = this.add.text(16, 16, 'Stars: 0', {
+    fontSize: '32px',
+    fill: '#000',
+  });
+  this.physics.add.overlap(
+    player,
+    stars,
+    // hide star when overlap
+    (player, star) => {
+      star.disableBody(true, true);
+      // increment star counter
+      score += 1;
+      scoreText.setText('Stars: ' + score);
+    },
+    null,
+    this
+  );
 }
 
 // this function is called continuously by the game loop
