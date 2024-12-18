@@ -1,4 +1,8 @@
-# [xxx] Game
+# Green Spark Rebellion
+
+## About
+
+Save the world from AI overlords with your trusty water pistol.
 
 ## Installation
 
