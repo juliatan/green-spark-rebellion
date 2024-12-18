@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "parcel": "^2.13.3",
-    "process": "^0.11.10"
+    "process": "^0.11.10",
+    "typescript": "^5.7.2"
   }
 }
