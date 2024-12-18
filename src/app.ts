@@ -4,7 +4,17 @@ import islandImg from '../assets/island.png';
 import starImg from '../assets/star.png';
 import playerImg from '../assets/player.png';
 
-const config = {
+interface GameConfig extends Phaser.Types.Core.GameConfig {
+  physics: {
+    default: string;
+    arcade: {
+      gravity: { x: number; y: number };
+      debug: boolean;
+    };
+  };
+}
+
+const config: GameConfig = {
   width: 800,
   height: 600,
   backgroundColor: 0xffffff,
@@ -16,17 +26,17 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 300 },
+      gravity: { x: 0, y: 300 },
       debug: false,
     },
   },
 };
 
 const game = new Phaser.Game(config);
-let player;
-let cursors;
+let player: Phaser.Physics.Arcade.Sprite;
+let cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
-function preload() {
+function preload(this: Phaser.Scene): void {
   this.load.image('ground', groundImg);
   this.load.image('island', islandImg);
   this.load.image('star', starImg);
@@ -35,9 +45,10 @@ function preload() {
     frameHeight: 48,
   });
 }
-function create() {
+
+function create(this: Phaser.Scene): void {
   // create group to hold still assets i.e. the platforms
-  let platforms = this.physics.add.staticGroup();
+  const platforms = this.physics.add.staticGroup();
 
   // add ground
   platforms.create(400, 588, 'ground');
@@ -82,7 +93,7 @@ function create() {
   });
 
   // add stars
-  let stars = this.physics.add.group();
+  const stars = this.physics.add.group();
   // drop from sky, y=0
   stars.create(22, 0, 'star');
   stars.create(122, 0, 'star');
@@ -97,27 +108,29 @@ function create() {
 
   // allow player to pick up stars
   let score = 0;
-  let scoreText = this.add.text(16, 16, 'Stars: 0', {
+  const scoreText = this.add.text(16, 16, 'Stars: 0', {
     fontSize: '32px',
-    fill: '#000',
+    color: '#000',
   });
+
   this.physics.add.overlap(
     player,
     stars,
     // hide star when overlap
     (player, star) => {
-      star.disableBody(true, true);
+      const starSprite = star as Phaser.Physics.Arcade.Image;
+      starSprite.disableBody(true, true);
       // increment star counter
       score += 1;
       scoreText.setText('Stars: ' + score);
     },
-    null,
+    undefined,
     this
   );
 }
 
 // this function is called continuously by the game loop
-function update() {
+function update(): void {
   if (cursors.left.isDown) {
     player.setVelocityX(-160);
     player.anims.play('left', true); // true sets animation to loop
@@ -130,7 +143,7 @@ function update() {
   }
 
   // if player sits on bottom, and up arrow pressed, push to top (gravity will be simulated)
-  if (cursors.up.isDown && player.body.touching.down) {
+  if (cursors.up.isDown && player.body?.touching.down) {
     player.setVelocityY(-330);
   }
 }
